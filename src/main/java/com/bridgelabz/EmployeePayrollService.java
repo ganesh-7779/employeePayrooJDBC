@@ -2,6 +2,7 @@ package com.bridgelabz;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService {
     private final EmployeePayrollDBService employeePayrollDBService;
@@ -77,6 +78,11 @@ public class EmployeePayrollService {
     public List<EmployeePayrollData> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
         if( ioService.equals(IOService.DB_IO))
             return employeePayrollDBService.getEmployeeForDateRange(startDate, endDate);
+        return null;
+    }
+    public Map<String, Double> readAvgSalaryByGender(IOService ioService) {
+        if(ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getAverageSalaryByGender();
         return null;
     }
 }

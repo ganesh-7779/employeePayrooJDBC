@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollServiceTest {
     EmployeePayrollService employeePayrollService = null;
@@ -47,7 +48,7 @@ public class EmployeePayrollServiceTest {
         Assert.assertTrue(result);
     }
     /**
-     * Purpose : To test whether the count of the retrieved data who have joined in a particular data range matches with the expected value
+     * This case to test whether the count of the retrieved data who have joined in a particular data range matches with the expected value
      */
     @Test
     public void givenDateRange_WhenRetrieved_ShouldMatchTheEmployeeCount() throws EmployeePayrollException {
@@ -56,5 +57,14 @@ public class EmployeePayrollServiceTest {
         LocalDate endDate = LocalDate.now();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollForDateRange(EmployeePayrollService.IOService.DB_IO, startDate, endDate);
         Assert.assertEquals(3, employeePayrollData.size());
+    }
+    /*
+     * This test case to retrive Avg employee salary group by gender
+     */
+    @Test
+    public void givenPayrollData_WhenAverageSalaryRetriveByGender_shouldReturnProperValue() throws EmployeePayrollException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String,Double> avgSalaryByGender = employeePayrollService.readAvgSalaryByGender(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertTrue(avgSalaryByGender.get("M").equals(1575000.00)&&avgSalaryByGender.get("F").equals(2000000.00));
     }
 }
