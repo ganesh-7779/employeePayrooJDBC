@@ -1,4 +1,5 @@
 package com.bridgelabz;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : For creating a singleton object
+     * This method For creating a singleton object
      */
     public static EmployeePayrollDBService getInstance() {
         if (employeePayrollDBService == null)
@@ -21,7 +22,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : To read employee payroll from database using JDBC.
+     * This method to read employee payroll from database using JDBC.
      */
     public List<EmployeePayrollData> readData() {
         String sql = "SELECT * FROM employee_payroll2";
@@ -43,14 +44,22 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : Update the salary in the DB using Statement Interface
+     *This method to Update the salary in the DB using Statement Interface
      */
     public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
         return this.updateEmployeeDataUsingStatement(name, salary);
     }
 
     /**
-     * Purpose : Create connection with the database
+     * Purpose : Update the salary in the DB using PreparedStatement Interface
+     */
+
+    public int updateEmployeeDataPreparedStatement(String name, double salary) throws EmployeePayrollException {
+        return this.updateEmployeeDataUsingPreparedStatement(name,salary);
+    }
+
+    /**
+     * This method to  Create connection with the database
      */
     private Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:mysql://localhost:3307/payroll_service?useSSL=false";
@@ -64,7 +73,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : Update the salary in the DB using Statement Interface
+     * This method to Update the salary in the DB using Statement Interface
      */
     private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
         String sql = String.format("UPDATE employee_payroll2 SET salary = %.2f WHERE name = '%s';", salary, name);
@@ -77,7 +86,23 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : Get the list of EmployeePayrollData using the assigned name.
+     * This method to Update the salary in the DB using PreparedStatement Interface
+     */
+    private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollException {
+        String sql = "UPDATE employee_payroll2 SET salary = ? WHERE name = ?";
+        try (Connection connection = this.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setDouble(1, salary);
+            statement.setString(2, name);
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new EmployeePayrollException("Please check the updateEmployeeDataUsingPreparedStatement() for detailed information!");
+        }
+    }
+
+    /**
+     * this method to Get the list of EmployeePayrollData using the assigned name.
      */
     public List<EmployeePayrollData> getEmployeePayrollData(String name) throws EmployeePayrollException {
         List<EmployeePayrollData> employeePayrollList = null;
@@ -94,7 +119,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : Assign the value of the attributes in a list and return it
+     * This method to Assign the value of the attributes in a list and return it
      */
     private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet) throws EmployeePayrollException {
         List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
@@ -113,7 +138,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : To get the details of a particular employee from the DB using PreparedStatement Interface
+     * This method to get the details of a particular employee from the DB using PreparedStatement Interface
      */
     private void preparedStatementForEmployeeData() throws EmployeePayrollException {
         try {
@@ -126,7 +151,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * Purpose : Create connection to execute query and read the value from the database
+     * This method to Create connection to execute query and read the value from the database
      * Assign the value in a list variable
      */
     private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql) throws EmployeePayrollException {
