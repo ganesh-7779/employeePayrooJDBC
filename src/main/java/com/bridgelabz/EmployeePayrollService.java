@@ -1,36 +1,59 @@
-/********************************************************************
- *Purpose : Java Database connectivity using 7 steps
- *        1.Import java.sql*   2.Load and Register driver
- *        3. Create connection 4. Create Statement
- *        5. Execute Query     6. Process The Results
- *        7. close connection.
- * @Auther : Ganesh Gavhad
- * @since  : 15-08-2021
- * @version : 1.0
- **********************************************************************/
 package com.bridgelabz;
-
 import java.util.List;
 
 public class EmployeePayrollService {
-
-    EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+    private final EmployeePayrollDBService employeePayrollDBService;
+    private List<EmployeePayrollData> employeePayrollList;
 
     public enum IOService {
         DB_IO
     }
 
-    private List<EmployeePayrollData> employeePayrollList;
-
     public EmployeePayrollService() {
+        employeePayrollDBService = EmployeePayrollDBService.getInstance();
     }
 
     /**
-     * Purpose : This method is To get the list of employee payroll from the database
+     * This method is for get the list of employee payroll from the database
      */
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) {
         if(ioService.equals(IOService.DB_IO))
             this.employeePayrollList = employeePayrollDBService.readData();
         return this.employeePayrollList;
+    }
+
+    /**
+     * This method is for update the Employee Salary in the database
+     */
+
+    public void updateEmployeeSalary(String name, double salary) throws EmployeePayrollException {
+        int result = employeePayrollDBService.updateEmployeeData(name, salary);
+        if(result == 0)
+            return;
+        EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+        if( employeePayrollData != null )
+            employeePayrollData.salary = salary;
+    }
+
+    /**
+     * This method check whether the EmployeePayrollData is in sync with the DB
+     * Use to equals() to compare the values
+     */
+
+    public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollException {
+        List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
+        return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+    }
+
+    /**
+     * this method is for Check the EmployeePayrollData list for the name
+     * If found, return the value else return null
+     */
+
+    private EmployeePayrollData getEmployeePayrollData(String name) {
+        return this.employeePayrollList.stream()
+                .filter(employeePayrollDataItem -> employeePayrollDataItem.name.equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }
