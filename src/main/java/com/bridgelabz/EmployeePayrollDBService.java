@@ -48,7 +48,7 @@ public class EmployeePayrollDBService {
     private Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:mysql://localhost:3307/payroll_service?useSSL=false";
         String userName = "root";
-        String password = "Ganesh@779";
+        String password = "Ganesh@7779";
         Connection connection;
         System.out.println("Connecting to database: " + jdbcURL);
         connection = DriverManager.getConnection(jdbcURL, userName, password);
@@ -154,5 +154,13 @@ public class EmployeePayrollDBService {
             throw new EmployeePayrollException("Please check the getEmployeePayrollDataUsingDB() for detailed information!");
         }
         return employeePayrollList;
+    }
+    /**
+     * This method to Read the data for a certain date range from the database
+     */
+    public List<EmployeePayrollData> getEmployeeForDateRange(LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
+        String sql = String.format("SELECT * FROM employee_payroll2 WHERE start BETWEEN '%s' AND '%s';",
+                Date.valueOf(startDate), Date.valueOf(endDate));
+        return getEmployeePayrollDataUsingDB(sql);
     }
 }
