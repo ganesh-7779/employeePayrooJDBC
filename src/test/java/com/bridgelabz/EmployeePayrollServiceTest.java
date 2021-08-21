@@ -3,6 +3,8 @@ package com.bridgelabz;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public class EmployeePayrollServiceTest {
@@ -43,5 +45,16 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.updateEmployeeSalaryUsingPreparedStatement("Bill", 150000);
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Bill");
         Assert.assertTrue(result);
+    }
+    /**
+     * Purpose : To test whether the count of the retrieved data who have joined in a particular data range matches with the expected value
+     */
+    @Test
+    public void givenDateRange_WhenRetrieved_ShouldMatchTheEmployeeCount() throws EmployeePayrollException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        LocalDate startDate = LocalDate.of(2017, 03, 01);
+        LocalDate endDate = LocalDate.now();
+        List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollForDateRange(EmployeePayrollService.IOService.DB_IO, startDate, endDate);
+        Assert.assertEquals(3, employeePayrollData.size());
     }
 }
