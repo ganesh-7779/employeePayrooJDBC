@@ -17,7 +17,7 @@ public class EmployeePayrollServiceTest {
       * this test case to test whether the number of records present in the database matches with the expected value
       */
     @Test
-    public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount() {
+    public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount() throws EmployeePayrollException {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Assert.assertEquals(3, employeePayrollData.size());

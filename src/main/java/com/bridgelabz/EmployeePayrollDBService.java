@@ -24,36 +24,20 @@ public class EmployeePayrollDBService {
     /**
      * This method to read employee payroll from database using JDBC.
      */
-    public List<EmployeePayrollData> readData() {
+    public List<EmployeePayrollData> readData() throws EmployeePayrollException {
         String sql = "SELECT * FROM employee_payroll2";
-        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
-        try (Connection connection = this.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(sql);
-            while (result.next()) {
-                int id = result.getInt("id");
-                String name = result.getString("name");
-                double salary = result.getDouble("salary");
-                LocalDate startDate = result.getDate("start").toLocalDate();
-                employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeePayrollList;
+        return getEmployeePayrollDataUsingDB(sql);
     }
-
     /**
-     *This method to Update the salary in the DB using Statement Interface
+     * This method to Update the salary in the DB using Statement Interface
      */
     public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
         return this.updateEmployeeDataUsingStatement(name, salary);
     }
 
     /**
-     * Purpose : Update the salary in the DB using PreparedStatement Interface
+     * This method to Update the salary in the DB using PreparedStatement Interface
      */
-
     public int updateEmployeeDataPreparedStatement(String name, double salary) throws EmployeePayrollException {
         return this.updateEmployeeDataUsingPreparedStatement(name,salary);
     }
@@ -64,7 +48,7 @@ public class EmployeePayrollDBService {
     private Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:mysql://localhost:3307/payroll_service?useSSL=false";
         String userName = "root";
-        String password = "Ganesh@7779";
+        String password = "Ganesh@779";
         Connection connection;
         System.out.println("Connecting to database: " + jdbcURL);
         connection = DriverManager.getConnection(jdbcURL, userName, password);
@@ -73,7 +57,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * This method to Update the salary in the DB using Statement Interface
+     * This method to  Update the salary in the DB using Statement Interface
      */
     private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
         String sql = String.format("UPDATE employee_payroll2 SET salary = %.2f WHERE name = '%s';", salary, name);
@@ -86,7 +70,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * This method to Update the salary in the DB using PreparedStatement Interface
+     * This method to  Update the salary in the DB using PreparedStatement Interface
      */
     private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollException {
         String sql = "UPDATE employee_payroll2 SET salary = ? WHERE name = ?";
@@ -102,7 +86,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * this method to Get the list of EmployeePayrollData using the assigned name.
+     * This method to Get the list of EmployeePayrollData using the assigned name.
      */
     public List<EmployeePayrollData> getEmployeePayrollData(String name) throws EmployeePayrollException {
         List<EmployeePayrollData> employeePayrollList = null;
@@ -119,7 +103,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * This method to Assign the value of the attributes in a list and return it
+     * This method to assign the value of the attributes in a list and return it
      */
     private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet) throws EmployeePayrollException {
         List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
@@ -151,7 +135,7 @@ public class EmployeePayrollDBService {
     }
 
     /**
-     * This method to Create connection to execute query and read the value from the database
+     * This method to create connection to execute query and read the value from the database
      * Assign the value in a list variable
      */
     private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql) throws EmployeePayrollException {
