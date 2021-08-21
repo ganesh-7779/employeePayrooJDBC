@@ -188,4 +188,24 @@ public class EmployeePayrollDBService {
         }
         return genderToAverageSalaryMap;
     }
+    /*
+     * UC 7 This method is for add new employee to employee payroll DB.
+     */
+    public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) {
+        int id = -1;
+        EmployeePayrollData employeePayrollData = null;
+        String  sql = String.format("INSERT INTO employee_payroll2 (name,gender,salary,start) VALUES ('%S','%S','%S','%S')", name,gender,salary,Date.valueOf(start));
+        try(Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql,statement.RETURN_GENERATED_KEYS);
+            if(rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) id = resultSet.getInt(1);
+            }
+            employeePayrollData = new EmployeePayrollData(id,name,salary,start);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeePayrollData;
+    }
 }

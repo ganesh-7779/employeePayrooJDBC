@@ -80,9 +80,18 @@ public class EmployeePayrollService {
             return employeePayrollDBService.getEmployeeForDateRange(startDate, endDate);
         return null;
     }
+    /*
+     * UC6 This method to read the avg salary of employee  group by gender.
+     */
     public Map<String, Double> readAvgSalaryByGender(IOService ioService) {
         if(ioService.equals(IOService.DB_IO))
             return employeePayrollDBService.getAverageSalaryByGender();
         return null;
+    }
+    /*
+     * UC7 This method to add new employee in Employee payroll DB.
+     */
+    public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,gender,salary,start));
     }
 }

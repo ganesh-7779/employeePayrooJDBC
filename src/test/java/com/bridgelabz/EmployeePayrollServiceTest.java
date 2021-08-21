@@ -43,7 +43,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDBUsingPreparedStatement() throws EmployeePayrollException {
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.updateEmployeeSalaryUsingPreparedStatement("Bill", 150000);
+        employeePayrollService.updateEmployeeSalaryUsingPreparedStatement("Bill", 1500000.00);
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Bill");
         Assert.assertTrue(result);
     }
@@ -59,12 +59,20 @@ public class EmployeePayrollServiceTest {
         Assert.assertEquals(3, employeePayrollData.size());
     }
     /*
-     * This test case to retrive Avg employee salary group by gender
+     * TC6 -This test case to retrive Avg employee salary group by gender
      */
     @Test
     public void givenPayrollData_WhenAverageSalaryRetriveByGender_shouldReturnProperValue() throws EmployeePayrollException {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Map<String,Double> avgSalaryByGender = employeePayrollService.readAvgSalaryByGender(EmployeePayrollService.IOService.DB_IO);
-        Assert.assertTrue(avgSalaryByGender.get("M").equals(1575000.00)&&avgSalaryByGender.get("F").equals(2000000.00));
+        Assert.assertTrue(avgSalaryByGender.get("M").equals(2000000.00)&&avgSalaryByGender.get("F").equals(2000000.00));
+    }
+    //TC7- For UC7 to check new employee is added or not.
+    @Test
+    public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll("Mark","M",200000.00,LocalDate.now());
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("MARK");
+        Assert.assertTrue(result);
     }
 }
