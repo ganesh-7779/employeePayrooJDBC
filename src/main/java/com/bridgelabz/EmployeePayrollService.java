@@ -17,7 +17,7 @@ public class EmployeePayrollService {
     /**
      * This method to get the list of employee payroll from the database
      */
-    public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) {
+    public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) throws EmployeePayrollException {
         if(ioService.equals(IOService.DB_IO))
             this.employeePayrollList = employeePayrollDBService.readData();
         return this.employeePayrollList;
