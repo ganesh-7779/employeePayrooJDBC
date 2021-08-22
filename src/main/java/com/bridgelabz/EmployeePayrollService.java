@@ -1,5 +1,6 @@
 package com.bridgelabz;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class EmployeePayrollService {
     /*
      * UC7 This method to add new employee in Employee payroll DB.
      */
-    public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) {
+    public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws SQLException {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,gender,salary,start));
     }
 }

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +68,12 @@ public class EmployeePayrollServiceTest {
         Map<String,Double> avgSalaryByGender = employeePayrollService.readAvgSalaryByGender(EmployeePayrollService.IOService.DB_IO);
         Assert.assertTrue(avgSalaryByGender.get("M").equals(2000000.00)&&avgSalaryByGender.get("F").equals(2000000.00));
     }
-    //TC7- For UC7 to check new employee is added or not.
+    //TC7- For UC7 or UC8 to check new employee is added with payroll Details or not.
     @Test
-    public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+    public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException, SQLException {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.addEmployeeToPayroll("Mark","M",200000.00,LocalDate.now());
+        employeePayrollService.addEmployeeToPayroll("Mark","M",2000000.00,LocalDate.now());
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("MARK");
-        Assert.assertTrue(result);
+        Assert.assertEquals(true,result);
     }
 }

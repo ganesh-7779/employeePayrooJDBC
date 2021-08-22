@@ -188,23 +188,82 @@ public class EmployeePayrollDBService {
         }
         return genderToAverageSalaryMap;
     }
+
     /*
      * UC 7 This method is for add new employee to employee payroll DB.
      */
-    public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) {
+    public EmployeePayrollData addEmployeeToPayrollUC7(String name, String gender, double salary, LocalDate start) {
         int id = -1;
         EmployeePayrollData employeePayrollData = null;
-        String  sql = String.format("INSERT INTO employee_payroll2 (name,gender,salary,start) VALUES ('%S','%S','%S','%S')", name,gender,salary,Date.valueOf(start));
-        try(Connection connection = this.getConnection()){
+        String sql = String.format("INSERT INTO employee_payroll2 (name,gender,salary,start) VALUES " +
+                "                 ('%S','%S','%S','%S')", name, gender, salary, Date.valueOf(start));
+        try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
-            int rowAffected = statement.executeUpdate(sql,statement.RETURN_GENERATED_KEYS);
-            if(rowAffected == 1) {
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) id = resultSet.getInt(1);
             }
-            employeePayrollData = new EmployeePayrollData(id,name,salary,start);
+            employeePayrollData = new EmployeePayrollData(id, name, salary, start);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return employeePayrollData;
+    }
+//UC8
+    public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws SQLException {
+        int id = -1;
+        Connection connection = null;
+        EmployeePayrollData employeePayrollData = null;
+        try {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try (Statement statement = connection.createStatement()) {
+            String sql = String.format("INSERT INTO employee_payroll2 (name,gender,salary,start) VALUES ('%S','%S','%S','%S')", name, gender, salary, Date.valueOf(start));
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) id = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.rollback();
+        }
+        try(Statement statement = connection.createStatement()){
+            double deduction = salary * 0.2;
+            double taxablePay = salary-deduction;
+            double tax = taxablePay*0.1;
+            double netPay = salary - tax;
+            String sql = String.format("INSERT INTO payroll_detail (employee_id,basic_pay, deduction,taxable_pay,tax,net_pay) VALUES" +
+                                      " (%S,%S,%S,%S,%S,%S)",id,salary,deduction,taxablePay,tax,netPay);
+            int rowAffected = statement.executeUpdate(sql);
+            if (rowAffected == 1) {
+                employeePayrollData= new EmployeePayrollData(id,name,salary,start);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+           try {
+               connection.rollback();
+               return employeePayrollData;
+           } catch (SQLException ex){
+               ex.printStackTrace();
+           }
+        }
+        try{
+            connection.commit();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return employeePayrollData;
     }
